@@ -45,18 +45,19 @@ public class Main : MonoBehaviour
                 var cell = Instantiate(pixel, pixel.transform.parent);
                 cell.SetActive(true);
                 pixels[i, j] = cell;
+                cell.name = "i" + i + "j" + j;
             }
         }
 
-       send.onClick.AddListener(delegate { SendOnClicked(); });
+        send.onClick.AddListener(delegate { SendOnClicked(); });
     }
 
     private void SendOnClicked()
     {
         string json = SerializedData();
-        StartCoroutine(PostJson("http://127.0.0.1:5000/LED", json));
+        StartCoroutine(PostJson("http://47.242.233.207:5000/LED", json));
     }
-    
+
     public static IEnumerator PostJson(string url, string postData)
     {
         Debug.Log("请求中。。。Url:" + url);
@@ -70,7 +71,7 @@ public class Main : MonoBehaviour
         {
             DownloadHandler downloadHandler_TXT = request.downloadHandler;
             Debug.Log("请求完成");
-         
+
         }
         else
         {
@@ -90,14 +91,14 @@ public class Main : MonoBehaviour
             writer.WriteStartObject();
             writer.WritePropertyName("Data");
             writer.WriteStartArray();
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 32; i++)
             {
-                for (int j = 0; j < 32; j++)
+                for (int j = 0; j < 8; j++)
                 {
                     writer.WriteStartObject();
                     if (i % 2 == 0)
                     {
-                        var data = pixels[i, j].GetComponent<PixelConfig>().GetData();
+                        var data = pixels[j, i].GetComponent<PixelConfig>().GetData();
                         writer.WritePropertyName("r");
                         writer.WriteValue(data.r);
                         writer.WritePropertyName("g");
@@ -107,7 +108,7 @@ public class Main : MonoBehaviour
                     }
                     else
                     {
-                        var data = pixels[i, 31 - j].GetComponent<PixelConfig>().GetData();
+                        var data = pixels[7 - j, i].GetComponent<PixelConfig>().GetData();
                         writer.WritePropertyName("r");
                         writer.WriteValue(data.r);
                         writer.WritePropertyName("g");
