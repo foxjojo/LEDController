@@ -5,14 +5,21 @@
 // with cs.SetTexture
 Texture2D<float4> Orgin;
 RWStructuredBuffer<float3> Result;
-[numthreads(8,8,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+int OrginW;
+int OrginH;
+
+[numthreads(8,1,1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
 {
-    float xStep= 1.0f/32.0f;
-    float yStep = 1.0f/8.0f;
-    //if(id.x%xStep == 0&& id.y%yStep == 0)
+    int xStep = trunc(OrginW / 32);
+    int yStep = trunc(OrginH / 8);
+
+    if (id.x % xStep == 0 && id.y % yStep == 0)
     {
-      
-        Result[id.x] = Orgin[id.xy];
+        int h = id.y / yStep;
+        int l = id.x / xStep;
+
+        Result[h * 32 + l] = Orgin[id.xy];
     }
+
 }

@@ -20,6 +20,7 @@ public class RGB
         this.g = g;
         this.b = b;
     }
+
     public RGB()
     {
         this.r = 0;
@@ -33,7 +34,7 @@ public class Main : MonoBehaviour
     public GameObject pixel;
     public Button send;
     private GameObject[,] pixels = new GameObject[8, 32];
-
+    public TexSampling texSampling;
 
     // Start is called before the first frame update
     void Start()
@@ -48,15 +49,16 @@ public class Main : MonoBehaviour
             }
         }
 
-       send.onClick.AddListener(delegate { SendOnClicked(); });
+        send.onClick.AddListener(delegate { SendOnClicked(); });
+        texSampling.Init(pixels);
     }
 
     private void SendOnClicked()
     {
         string json = SerializedData();
-        StartCoroutine(PostJson("http://127.0.0.1:5000/LED", json));
+        StartCoroutine(PostJson("http://47.242.233.207:5000/LED", json));
     }
-    
+
     public static IEnumerator PostJson(string url, string postData)
     {
         Debug.Log("请求中。。。Url:" + url);
@@ -70,7 +72,6 @@ public class Main : MonoBehaviour
         {
             DownloadHandler downloadHandler_TXT = request.downloadHandler;
             Debug.Log("请求完成");
-         
         }
         else
         {
